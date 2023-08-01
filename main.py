@@ -1,8 +1,11 @@
 import streamlit as st
 import json
 
+st.set_page_config(layout="wide")
 st.header("Gherkin Tutorial")
 st.write("Hello World")
+
+
 
 if 'session_case' not in st.session_state:
     st.session_state["session_case"] = ""
@@ -12,10 +15,9 @@ with st.sidebar:
     st.write("This is the sidebar")
 
     st.file_uploader(label="Upload AML File", key="AML_Upload_Button")
-    st.download_button(label="Validation Report",
+    case_dowload_button = st.download_button(label="Validation Report",
                        data=st.session_state["session_case"], file_name="test.json")
 ####################
-
 
 case1, case2 = st.tabs(["Click this to see tab 1", "Tab 2"])
 
@@ -24,9 +26,8 @@ with case1:
     column1, column2 = st.columns([9, 3])
     with column1:
         with st.expander("Expand me"):
-            button1 = st.button(label="Click me", key="button1",
-                                type="primary", use_container_width=True)
-
+            button1 = st.button(label="Click me", key="button1",type="primary", use_container_width=True)
+ 
     with column2:
         st.button(label="Click me", key="button2", type="secondary")
         st.number_input("Give a number")
@@ -38,6 +39,22 @@ with case1:
 with case2:
     with st.expander("Scenario"):
         scenario_input = st.text_input("Scenario description", key = "scenario_input")
+        subject_column, predicate_column, support_column, object_column = st.columns([3, 2, 1, 3])
+        with subject_column:
+            st.text_input("Subject", key = "subject_input")
+            st.selectbox("Select an option", options=["Breaker", "Maker", "Checker"])
+        with predicate_column:
+            st.text_input("Predicate", key = "predicate_input")
+            st.selectbox("Select an option", options=["is", "is not", "is greater than", "is less than", "joins"])
+        with support_column:
+            st.text_input("Support", key = "support_input")
+            st.selectbox("Select an option", options=["a", "an", "the"])
+        with object_column:
+            st.text_input("Object", key = "object_input")
+            st.selectbox("Select an option", options=["Breaker", "Maker", "Checker", "Game", "Player"])
+
+
+
     with st.expander("Given"):
         given_input= st.text_input("Given description", key = "given_input")
     with st.expander("When"):
@@ -45,27 +62,31 @@ with case2:
     with st.expander("Then"):
         then_input = st.text_input("Then description", key = "then_input")
 
-    case_save_button = st.button("Save Case", key = "case_save_button")
+    case_show_button = st.button("Show Case", key = "case_show_button", type="secondary", use_container_width=True)
+    case_save_button = st.button("Save Case", key = "case_save_button", type="primary", use_container_width=True)
 
 if button1:
     st.info("Successfully clicked on button")
 
-if case_save_button:
-    string_output = scenario_input + given_input + when_input + then_input
-    list_output = [scenario_input, given_input, when_input, then_input]
-    dict_output = {
-        "scenario": scenario_input,
-        "given": given_input,
-        "When": when_input,
-        "then": then_input,
-    }
+string_output = scenario_input + given_input + when_input + then_input
+list_output = [scenario_input, given_input, when_input, then_input]
+dict_output = {
+    "scenario": scenario_input,
+    "given": given_input,
+    "When": when_input,
+    "then": then_input,
+}
 
-    st.session_state["session_case"] = json.dumps(dict_output)
-
+if case_show_button:
     st.write(string_output)
     st.write(list_output)
     st.write(list_output[0])
     st.write(dict_output)
     st.write(dict_output["then"])
     st.write(st.session_state["session_case"])
+
+if case_save_button:
+    st.session_state["session_case"] = json.dumps(dict_output)
+    #st.experimental_rerun()
+
 
